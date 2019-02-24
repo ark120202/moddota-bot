@@ -1,4 +1,5 @@
 import bytes from 'bytes';
+import { distanceInWords } from 'date-fns';
 import fetch from 'node-fetch';
 import { URLSearchParams } from 'url';
 import { sendMessageToChannel } from '../discord';
@@ -84,7 +85,10 @@ const announceFileDiff = (id: string, oldFile: File, newFile: File) => {
   sendMessageToChannel('dota2mods', {
     embed: {
       title: 'Custom Game Update',
-      description: `**${newFile.title}**\n${sizeMessage}`,
+      description: `**${newFile.title}**\n${sizeMessage}\nPrevious update ${distanceInWords(
+        oldFile.lastUpdate * 1000,
+        newFile.lastUpdate * 1000,
+      )} ago`,
       url: CHANGELOG_URL_BASE + id,
       thumbnail: { url: newFile.previewUrl },
     },
