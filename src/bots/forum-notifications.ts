@@ -44,7 +44,7 @@ const announceNewPost = async (newestPostDate: number, post: Post) => {
       $message.find('a').replaceWith('&lt;link removed&gt;');
       const content = $message.text().trim();
 
-      sendMessageToChannel('dota2mods', {
+      sendMessageToChannel('dota2modhelpdesk', {
         embed: {
           title: 'New message on ModDota Forums',
           url: `${post.url}#${id}`,

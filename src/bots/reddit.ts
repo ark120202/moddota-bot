@@ -12,7 +12,7 @@ export const redditLoop = botLoop('Reddit', 30000, async () => {
   if (lastPost) {
     for (const child of [...children].reverse()) {
       const text = removeLinks((child.data.selftext as string).replace(/&amp;#x200B;/g, ''));
-      sendMessageToChannel('dota2mods', {
+      sendMessageToChannel('dota2modhelpdesk', {
         embed: {
           title: 'New post on r/Dota2Modding',
           url: child.data.url,
