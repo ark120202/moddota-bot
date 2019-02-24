@@ -65,10 +65,9 @@ const getCustomGames = async (ids: number[]) => {
 
 const CHANGELOG_URL_BASE = 'https://steamcommunity.com/sharedfiles/filedetails/changelog/';
 const announceFileDiff = (id: string, oldFile: File, newFile: File) => {
-  if (oldFile.lastUpdate === newFile.lastUpdate) return;
-
-  const timeDiff = Date.now() - newFile.lastUpdate * 1000;
-  if (timeDiff > 1000 * 60 * 10) {
+  const timeDiff = newFile.lastUpdate - oldFile.lastUpdate;
+  if (timeDiff === 0) return;
+  if (timeDiff <= 60 * 60 * 24) {
     console.log(`[Custom Game Updates] Ignoring new update because it's ${timeDiff} old`);
     return;
   }
