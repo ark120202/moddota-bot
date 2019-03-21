@@ -82,7 +82,7 @@ const announceFileDiff = (id: string, oldFile: File, newFile: File) => {
       ? `_${oldSize}_ -> **${newSize}** (${formattedSizeChange})`
       : `**${newSize}** (not changed)`;
 
-  sendMessageToChannel('dota2mods', {
+  sendMessageToChannel('moddota', {
     embed: {
       title: 'Custom Game Update',
       description: `**${newFile.title}**\n${sizeMessage}\nPrevious update ${distanceInWords(

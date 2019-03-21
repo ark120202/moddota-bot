@@ -39,7 +39,7 @@ export const newCustomGamesLoop = botLoop('New Custom Games', 30000, async () =>
   const items = await getNewCustomGames();
 
   for (const item of items.filter(x => x.id > lastFile).reverse()) {
-    sendMessageToChannel('dota2mods', {
+    sendMessageToChannel('moddota', {
       embed: {
         title: 'New custom game published',
         description: `**${item.title}** by _${item.authorName}_`,
