@@ -24,6 +24,7 @@ const getLatestPosts = async () => {
   return posts;
 };
 
+const postCooldowns = new Map<string, number>();
 const announceNewPost = async (newestPostDate: number, post: Post) => {
   const $ = cheerio.load(await (await fetch(post.url)).text());
   const title = $('.PageTitle').text();
@@ -44,12 +45,14 @@ const announceNewPost = async (newestPostDate: number, post: Post) => {
       $message.find('a').replaceWith('&lt;link removed&gt;');
       const content = $message.text().trim();
 
+      if (postCooldowns.has(author) && Date.now() < postCooldowns.get(author)!) return;
+      postCooldowns.set(author, Date.now() + 1000 * 60 * 60);
+
       sendMessageToChannel('moddota-helpdesk', {
         embed: {
           title: 'New message on ModDota Forums',
           url: `${post.url}#${id}`,
-          description: `**${author}**:\n${content}`,
-          footer: { text: `> ${title}` },
+          description: `_${author}_ in **${title}**:\n${content}`,
           color: 0xb3d34b,
         },
       });
