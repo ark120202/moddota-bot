@@ -3,6 +3,7 @@ import fetch from 'node-fetch';
 import { sendMessageToChannel } from '../discord';
 import { botLoop } from '../utils';
 
+const cooldowns = new Map<string, number>();
 const REGEX_CHINESE = /[\u4e00-\u9fff]|[\u3400-\u4dbf]|[\u{20000}-\u{2a6df}]|[\u{2a700}-\u{2b73f}]|[\u{2b740}-\u{2b81f}]|[\u{2b820}-\u{2ceaf}]|[\uf900-\ufaff]|[\u3300-\u33ff]|[\ufe30-\ufe4f]|[\uf900-\ufaff]|[\u{2f800}-\u{2fa1f}]/u;
 const BLOCKED_PHRASES = ['giveaway', 'free', 'you won', 'skins'];
 const PAGE_URL =
@@ -19,6 +20,7 @@ const getNewCustomGames = async () => {
         title: $item.find('.workshopItemTitle').text(),
         url: $anchor.attr('href').replace(/&searchtext=$/, ''),
         authorName: $item.find('.workshopItemAuthorName > a').text(),
+        authorSteamUrl: $item.find('.workshopItemAuthorName > a').attr('href'),
         preview: $item.find('.workshopItemPreviewImage').attr('src'),
       };
     })
@@ -38,6 +40,10 @@ export const newCustomGamesLoop = botLoop('New Custom Games', 30000, async () =>
   const items = await getNewCustomGames();
 
   for (const item of items.filter(x => x.id > lastFile).reverse()) {
+    const { authorSteamUrl } = item;
+    if (cooldowns.has(authorSteamUrl) && Date.now() < cooldowns.get(authorSteamUrl)!) continue;
+    cooldowns.set(authorSteamUrl, Date.now() + 1000 * 60 * 60 * 12);
+
     sendMessageToChannel('moddota', {
       embed: {
         title: 'New custom game published',
