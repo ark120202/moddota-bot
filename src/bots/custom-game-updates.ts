@@ -28,6 +28,9 @@ const WATCH_CUSTOM_GAMES = [
   1337770201, // Boss Hunters
   1448982217, // Green Tea Dota
   600881584, // Comic's Heroes Wars
+  302491959, // Battleships
+  1673920417, // Dota 2 but it's Artifact
+  1686229424, // Dota 12v12 2.0
 ];
 
 if (process.env.NODE_ENV !== 'production') WATCH_CUSTOM_GAMES.push(934517567); // Angel Arena Black Star develop branch
