@@ -3,7 +3,8 @@ import fetch from 'node-fetch';
 import { sendMessageToChannel } from '../discord';
 import { botLoop } from '../utils';
 
-const BLOCKED_PHRASES = ['giveaway', 'free', 'you won'];
+const REGEX_CHINESE = /[\u4e00-\u9fff]|[\u3400-\u4dbf]|[\u{20000}-\u{2a6df}]|[\u{2a700}-\u{2b73f}]|[\u{2b740}-\u{2b81f}]|[\u{2b820}-\u{2ceaf}]|[\uf900-\ufaff]|[\u3300-\u33ff]|[\ufe30-\ufe4f]|[\uf900-\ufaff]|[\u{2f800}-\u{2fa1f}]/u;
+const BLOCKED_PHRASES = ['giveaway', 'free', 'you won', 'skins'];
 const PAGE_URL =
   'https://steamcommunity.com/workshop/browse/?appid=570&browsesort=mostrecent&section=readytouseitems&actualsort=mostrecent&p=1';
 const getNewCustomGames = async () => {
@@ -21,15 +22,13 @@ const getNewCustomGames = async () => {
         preview: $item.find('.workshopItemPreviewImage').attr('src'),
       };
     })
-    .filter(({ title }) => {
-      const block = BLOCKED_PHRASES.some(phrase => title.toLowerCase().includes(phrase));
-      if (block) console.log(`[New Custom Games] Name "${title}" contains blocked phrases`);
-      return !block;
-    });
-
-  if (items.length === 0) {
-    throw new Error('No items found');
-  }
+    .filter(
+      ({ title }) =>
+        !(
+          BLOCKED_PHRASES.some(phrase => title.toLowerCase().includes(phrase)) ||
+          REGEX_CHINESE.test(title)
+        ),
+    );
 
   return items;
 };
@@ -51,7 +50,7 @@ export const newCustomGamesLoop = botLoop('New Custom Games', 30000, async () =>
   }
 
   // Use `Math.max` in case some custom game was hidden
-  if (!isFinite(lastFile) || lastFile !== Math.max(lastFile, items[0].id)) {
+  if (items.length > 0 && (!isFinite(lastFile) || lastFile !== Math.max(lastFile, items[0].id))) {
     console.log(`[New Custom Games] Update latest id to: ${items[0].id}`);
     lastFile = items[0].id;
   }
