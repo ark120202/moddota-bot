@@ -31,6 +31,7 @@ const WATCH_CUSTOM_GAMES = [
   302491959, // Battleships
   1673920417, // Dota 2 but it's Artifact
   1686229424, // Dota 12v12 2.0
+  1759829094, // Courier TD
 ];
 
 if (process.env.NODE_ENV !== 'production') WATCH_CUSTOM_GAMES.push(934517567); // Angel Arena Black Star develop branch
