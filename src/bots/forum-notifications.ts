@@ -1,7 +1,7 @@
 import cheerio from 'cheerio';
 import fetch from 'node-fetch';
 import { sendMessageToChannel } from '../discord';
-import { botLoop } from '../utils';
+import { botLoop, isChineseText } from '../utils';
 
 interface Post {
   url: string;
@@ -44,6 +44,8 @@ const announceNewPost = async (newestPostDate: number, post: Post) => {
         .forEach($e => $e.replaceWith(`\`\`\`${$e.text()}\`\`\``));
       $message.find('a').replaceWith('&lt;link removed&gt;');
       const content = $message.text().trim();
+
+      if (isChineseText(title)) return;
 
       if (postCooldowns.has(author) && Date.now() < postCooldowns.get(author)!) return;
       postCooldowns.set(author, Date.now() + 1000 * 60 * 60);
